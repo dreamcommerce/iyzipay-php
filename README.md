@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/iyzico/iyzipay-php.svg?branch=master)](https://travis-ci.org/iyzico/iyzipay-php)
 [![Latest Stable Version](https://poser.pugx.org/iyzico/iyzipay-php/version)](https://packagist.org/packages/iyzico/iyzipay-php)
+[![Coverage Status](https://coveralls.io/repos/github/iyzico/iyzipay-php/badge.svg?branch=develop)](https://coveralls.io/github/iyzico/iyzipay-php?branch=develop)
 
 You can sign up for an iyzico account at https://iyzico.com
 
@@ -37,15 +38,16 @@ require_once('/path/to/iyzipay-php/IyzipayBootstrap.php');
 
 ```php
 $options = new \Iyzipay\Options();
-$options->setApiKey("api key");
-$options->setSecretKey("secret key");
-$options->setBaseUrl("https://stg.iyzipay.com");
+$options->setApiKey("your api key");
+$options->setSecretKey("your secret key");
+$options->setBaseUrl("https://sandbox-api.iyzipay.com");
         
 $request = new \Iyzipay\Request\CreatePaymentRequest();
 $request->setLocale(\Iyzipay\Model\Locale::TR);
 $request->setConversationId("123456789");
 $request->setPrice("1");
-$request->setPaidPrice("1.1");
+$request->setPaidPrice("1.2");
+$request->setCurrency(\Iyzipay\Model\Currency::TL);
 $request->setInstallment(1);
 $request->setBasketId("B67832");
 $request->setPaymentChannel(\Iyzipay\Model\PaymentChannel::WEB);
@@ -69,7 +71,7 @@ $buyer->setEmail("email@email.com");
 $buyer->setIdentityNumber("74300864791");
 $buyer->setLastLoginDate("2015-10-05 12:43:35");
 $buyer->setRegistrationDate("2013-04-21 15:12:09");
-$buyer->setRegistrationAddress("Address");
+$buyer->setRegistrationAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
 $buyer->setIp("85.34.78.112");
 $buyer->setCity("Istanbul");
 $buyer->setCountry("Turkey");
@@ -80,7 +82,7 @@ $shippingAddress = new \Iyzipay\Model\Address();
 $shippingAddress->setContactName("Jane Doe");
 $shippingAddress->setCity("Istanbul");
 $shippingAddress->setCountry("Turkey");
-$shippingAddress->setAddress("Address");
+$shippingAddress->setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
 $shippingAddress->setZipCode("34742");
 $request->setShippingAddress($shippingAddress);
 
@@ -88,9 +90,9 @@ $billingAddress = new \Iyzipay\Model\Address();
 $billingAddress->setContactName("Jane Doe");
 $billingAddress->setCity("Istanbul");
 $billingAddress->setCountry("Turkey");
-$billingAddress->setAddress("Address");
+$billingAddress->setAddress("Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1");
 $billingAddress->setZipCode("34742");
-$request->setbillingAddress($billingAddress);
+$request->setBillingAddress($billingAddress);
 
 $basketItems = array();
 $firstBasketItem = new \Iyzipay\Model\BasketItem();
@@ -100,8 +102,6 @@ $firstBasketItem->setCategory1("Collectibles");
 $firstBasketItem->setCategory2("Accessories");
 $firstBasketItem->setItemType(\Iyzipay\Model\BasketItemType::PHYSICAL);
 $firstBasketItem->setPrice("0.3");
-$firstBasketItem->setSubMerchantKey("sub merchant key");
-$firstBasketItem->setSubMerchantPrice("0.27");
 $basketItems[0] = $firstBasketItem;
 
 $secondBasketItem = new \Iyzipay\Model\BasketItem();
@@ -111,8 +111,6 @@ $secondBasketItem->setCategory1("Game");
 $secondBasketItem->setCategory2("Online Game Items");
 $secondBasketItem->setItemType(\Iyzipay\Model\BasketItemType::VIRTUAL);
 $secondBasketItem->setPrice("0.5");
-$secondBasketItem->setSubMerchantKey("sub merchant key");
-$secondBasketItem->setSubMerchantPrice("0.42");
 $basketItems[1] = $secondBasketItem;
 
 $thirdBasketItem = new \Iyzipay\Model\BasketItem();
@@ -122,12 +120,10 @@ $thirdBasketItem->setCategory1("Electronics");
 $thirdBasketItem->setCategory2("Usb / Cable");
 $thirdBasketItem->setItemType(\Iyzipay\Model\BasketItemType::PHYSICAL);
 $thirdBasketItem->setPrice("0.2");
-$thirdBasketItem->setSubMerchantKey("sub merchant key");
-$thirdBasketItem->setSubMerchantPrice("0.18");
 $basketItems[2] = $thirdBasketItem;
 $request->setBasketItems($basketItems);
 
-$paymentAuth = \Iyzipay\Model\PaymentAuth::create($request, Sample::options());
+$payment = \Iyzipay\Model\Payment::create($request, $options);
 ```
 See other samples under samples directory.
 
@@ -139,7 +135,65 @@ Install dependencies:
 composer install
 ```
 
-## Testing
+### Mock test cards
+
+Test cards that can be used to simulate a *successful* payment:
+
+Card Number      | Bank                       | Card Type
+-----------      | ----                       | ---------
+5890040000000016 | Akbank                     | Master Card (Debit)  
+5526080000000006 | Akbank                     | Master Card (Credit)  
+4766620000000001 | Denizbank                  | Visa (Debit)  
+4603450000000000 | Denizbank                  | Visa (Credit)
+4729150000000005 | Denizbank Bonus            | Visa (Credit)  
+4987490000000002 | Finansbank                 | Visa (Debit)  
+5311570000000005 | Finansbank                 | Master Card (Credit)  
+9792020000000001 | Finansbank                 | Troy (Debit)  
+9792030000000000 | Finansbank                 | Troy (Credit)  
+5170410000000004 | Garanti Bankası            | Master Card (Debit)  
+5400360000000003 | Garanti Bankası            | Master Card (Credit)  
+374427000000003  | Garanti Bankası            | American Express  
+4475050000000003 | Halkbank                   | Visa (Debit)  
+5528790000000008 | Halkbank                   | Master Card (Credit)  
+4059030000000009 | HSBC Bank                  | Visa (Debit)  
+5504720000000003 | HSBC Bank                  | Master Card (Credit)  
+5892830000000000 | Türkiye İş Bankası         | Master Card (Debit)  
+4543590000000006 | Türkiye İş Bankası         | Visa (Credit)  
+4910050000000006 | Vakıfbank                  | Visa (Debit)  
+4157920000000002 | Vakıfbank                  | Visa (Credit)  
+5168880000000002 | Yapı ve Kredi Bankası      | Master Card (Debit)  
+5451030000000000 | Yapı ve Kredi Bankası      | Master Card (Credit)  
+
+*Cross border* test cards:
+
+Card Number      | Country
+-----------      | -------
+4054180000000007 | Non-Turkish (Debit)
+5400010000000004 | Non-Turkish (Credit)  
+6221060000000004 | Iran  
+
+Test cards to get specific *error* codes:
+
+Card Number       | Description
+-----------       | -----------
+5406670000000009  | Success but cannot be cancelled, refund or post auth
+4111111111111129  | Not sufficient funds
+4129111111111111  | Do not honour
+4128111111111112  | Invalid transaction
+4127111111111113  | Lost card
+4126111111111114  | Stolen card
+4125111111111115  | Expired card
+4124111111111116  | Invalid cvc2
+4123111111111117  | Not permitted to card holder
+4122111111111118  | Not permitted to terminal
+4121111111111119  | Fraud suspect
+4120111111111110  | Pickup card
+4130111111111118  | General error
+4131111111111117  | Success but mdStatus is 0
+4141111111111115  | Success but mdStatus is 4
+4151111111111112  | 3dsecure initialize failed
+
+# Testing
 
 Install dependencies as mentioned above (which will resolve [PHPUnit](http://packagist.org/packages/phpunit/phpunit)), then you can run the test suite:
 
@@ -150,5 +204,5 @@ Install dependencies as mentioned above (which will resolve [PHPUnit](http://pac
 Or to run an individual test file:
 
 ```bash
-./vendor/bin/phpunit tests/Iyzipay/Tests/OptionsTest.php
+./vendor/bin/phpunit tests/Iyzipay/Tests/Model/PaymentTest.php
 ```

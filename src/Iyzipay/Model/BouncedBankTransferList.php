@@ -2,9 +2,7 @@
 
 namespace Iyzipay\Model;
 
-use Iyzipay\HttpClient;
 use Iyzipay\IyzipayResource;
-use Iyzipay\JsonBuilder;
 use Iyzipay\Model\Mapper\BouncedBankTransferListMapper;
 use Iyzipay\Options;
 use Iyzipay\Request\RetrieveTransactionsRequest;
@@ -15,8 +13,8 @@ class BouncedBankTransferList extends IyzipayResource
 
     public static function retrieve(RetrieveTransactionsRequest $request, Options $options)
     {
-        $rawResult = HttpClient::create()->post($options->getBaseUrl() . "/reporting/settlement/bounced", parent::getHttpHeaders($request, $options), $request->toJsonString());
-        return BouncedBankTransferListMapper::create()->mapBouncedBankTransferList(new BouncedBankTransferList(), JsonBuilder::jsonDecode($rawResult));
+        $rawResult = parent::httpClient()->post($options->getBaseUrl() . "/reporting/settlement/bounced", parent::getHttpHeaders($request, $options), $request->toJsonString());
+        return BouncedBankTransferListMapper::create($rawResult)->jsonDecode()->mapBouncedBankTransferList(new BouncedBankTransferList());
     }
 
     public function getBankTransfers()

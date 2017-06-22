@@ -2,9 +2,7 @@
 
 namespace Iyzipay\Model;
 
-use Iyzipay\HttpClient;
 use Iyzipay\IyzipayResource;
-use Iyzipay\JsonBuilder;
 use Iyzipay\Model\Mapper\CardMapper;
 use Iyzipay\Options;
 use Iyzipay\Request\CreateCardRequest;
@@ -26,14 +24,14 @@ class Card extends IyzipayResource
 
     public static function create(CreateCardRequest $request, Options $options)
     {
-        $rawResult = HttpClient::create()->post($options->getBaseUrl() . "/cardstorage/card", parent::getHttpHeaders($request, $options), $request->toJsonString());
-        return CardMapper::create()->mapCard(new Card(), JsonBuilder::jsonDecode($rawResult));
+        $rawResult = parent::httpClient()->post($options->getBaseUrl() . "/cardstorage/card", parent::getHttpHeaders($request, $options), $request->toJsonString());
+        return CardMapper::create($rawResult)->jsonDecode()->mapCard(new Card());
     }
 
     public static function delete(DeleteCardRequest $request, Options $options)
     {
-        $rawResult = HttpClient::create()->delete($options->getBaseUrl() . "/cardstorage/card", parent::getHttpHeaders($request, $options), $request->toJsonString());
-        return CardMapper::create()->mapCard(new Card(), JsonBuilder::jsonDecode($rawResult));
+        $rawResult = parent::httpClient()->delete($options->getBaseUrl() . "/cardstorage/card", parent::getHttpHeaders($request, $options), $request->toJsonString());
+        return CardMapper::create($rawResult)->jsonDecode()->mapCard(new Card());
     }
 
     public function getExternalId()

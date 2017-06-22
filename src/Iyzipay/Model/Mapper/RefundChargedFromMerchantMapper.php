@@ -4,26 +4,21 @@ namespace Iyzipay\Model\Mapper;
 
 use Iyzipay\Model\RefundChargedFromMerchant;
 
-class RefundChargedFromMerchantMapper extends IyzipayResourceMapper
+class RefundChargedFromMerchantMapper extends RefundResourceMapper
 {
-    public static function create()
+    public static function create($rawResult = null)
     {
-        return new RefundChargedFromMerchantMapper();
+        return new RefundChargedFromMerchantMapper($rawResult);
     }
 
-    public function mapRefundChargedFromMerchant(RefundChargedFromMerchant $refund, $jsonResult)
+    public function mapRefundChargedFromMerchantFrom(RefundChargedFromMerchant $refund, $jsonObject)
     {
-        parent::mapResource($refund, $jsonResult);
-
-        if (isset($jsonResult->paymentId)) {
-            $refund->setPaymentId($jsonResult->paymentId);
-        }
-        if (isset($jsonResult->paymentTransactionId)) {
-            $refund->setPaymentTransactionId($jsonResult->paymentTransactionId);
-        }
-        if (isset($jsonResult->price)) {
-            $refund->setPrice($jsonResult->price);
-        }
+        parent::mapRefundResourceFrom($refund, $jsonObject);
         return $refund;
+    }
+
+    public function mapRefundChargedFromMerchant(RefundChargedFromMerchant $refund)
+    {
+        return $this->mapRefundChargedFromMerchantFrom($refund, $this->jsonObject);
     }
 }

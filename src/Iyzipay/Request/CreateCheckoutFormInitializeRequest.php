@@ -13,6 +13,7 @@ class CreateCheckoutFormInitializeRequest extends Request
     private $basketId;
     private $paymentGroup;
     private $paymentSource;
+    private $currency;
     private $buyer;
     private $shippingAddress;
     private $billingAddress;
@@ -21,6 +22,7 @@ class CreateCheckoutFormInitializeRequest extends Request
     private $forceThreeDS;
     private $cardUserKey;
     private $posOrderId;
+    private $enabledInstallments;
 
     public function getPrice()
     {
@@ -70,6 +72,16 @@ class CreateCheckoutFormInitializeRequest extends Request
     public function setPaymentSource($paymentSource)
     {
         $this->paymentSource = $paymentSource;
+    }
+
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
     }
 
     public function getBuyer()
@@ -152,6 +164,16 @@ class CreateCheckoutFormInitializeRequest extends Request
         $this->posOrderId = $posOrderId;
     }
 
+    public function setEnabledInstallments($enabledInstallments)
+    {
+        $this->enabledInstallments = $enabledInstallments;
+    }
+
+    public function getEnabledInstallments()
+    {
+        return $this->enabledInstallments;
+    }
+
     public function getJsonObject()
     {
         return JsonBuilder::fromJsonObject(parent::getJsonObject())
@@ -164,10 +186,12 @@ class CreateCheckoutFormInitializeRequest extends Request
             ->addArray("basketItems", $this->getBasketItems())
             ->add("callbackUrl", $this->getCallbackUrl())
             ->add("paymentSource", $this->getPaymentSource())
+            ->add("currency", $this->getCurrency())
             ->add("posOrderId", $this->getPosOrderId())
             ->addPrice("paidPrice", $this->getPaidPrice())
             ->add("forceThreeDS", $this->getForceThreeDS())
             ->add("cardUserKey", $this->getCardUserKey())
+            ->addArray("enabledInstallments", $this->getEnabledInstallments())
             ->getObject();
     }
 
@@ -184,10 +208,12 @@ class CreateCheckoutFormInitializeRequest extends Request
             ->appendArray("basketItems", $this->getBasketItems())
             ->append("callbackUrl", $this->getCallbackUrl())
             ->append("paymentSource", $this->getPaymentSource())
+            ->append("currency", $this->getCurrency())
             ->append("posOrderId", $this->getPosOrderId())
             ->appendPrice("paidPrice", $this->getPaidPrice())
             ->append("forceThreeDS", $this->getForceThreeDS())
             ->append("cardUserKey", $this->getCardUserKey())
+            ->appendArray("enabledInstallments", $this->getEnabledInstallments())
             ->getRequestString();
     }
 }

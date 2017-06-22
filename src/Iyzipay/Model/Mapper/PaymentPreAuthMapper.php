@@ -4,16 +4,21 @@ namespace Iyzipay\Model\Mapper;
 
 use Iyzipay\Model\PaymentPreAuth;
 
-class PaymentPreAuthMapper extends PaymentMapper
+class PaymentPreAuthMapper extends PaymentResourceMapper
 {
-    public static function create()
+    public static function create($rawResult = null)
     {
-        return new PaymentPreAuthMapper();
+        return new PaymentPreAuthMapper($rawResult);
     }
 
-    public function mapPaymentPreAuth(PaymentPreAuth $preAuth, $jsonResult)
+    public function mapPaymentPreAuthFrom(PaymentPreAuth $paymentPreAuth, $jsonObject)
     {
-        parent::mapPayment($preAuth, $jsonResult);
-        return $preAuth;
+        parent::mapPaymentResourceFrom($paymentPreAuth, $jsonObject);
+        return $paymentPreAuth;
+    }
+
+    public function mapPaymentPreAuth(PaymentPreAuth $paymentPreAuth)
+    {
+        return $this->mapPaymentPreAuthFrom($paymentPreAuth, $this->jsonObject);
     }
 }

@@ -4,26 +4,21 @@ namespace Iyzipay\Model\Mapper;
 
 use Iyzipay\Model\Refund;
 
-class RefundMapper extends IyzipayResourceMapper
+class RefundMapper extends RefundResourceMapper
 {
-    public static function create()
+    public static function create($rawResult = null)
     {
-        return new RefundMapper();
+        return new RefundMapper($rawResult);
     }
 
-    public function mapRefund(Refund $refund, $jsonResult)
+    public function mapRefundFrom(Refund $refund, $jsonObject)
     {
-        parent::mapResource($refund, $jsonResult);
-
-        if (isset($jsonResult->paymentId)) {
-            $refund->setPaymentId($jsonResult->paymentId);
-        }
-        if (isset($jsonResult->paymentTransactionId)) {
-            $refund->setPaymentTransactionId($jsonResult->paymentTransactionId);
-        }
-        if (isset($jsonResult->price)) {
-            $refund->setPrice($jsonResult->price);
-        }
+        parent::mapRefundResourceFrom($refund, $jsonObject);
         return $refund;
+    }
+
+    public function mapRefund(Refund $refund)
+    {
+        return $this->mapRefundFrom($refund, $this->jsonObject);
     }
 }

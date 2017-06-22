@@ -2,9 +2,7 @@
 
 namespace Iyzipay\Model;
 
-use Iyzipay\HttpClient;
 use Iyzipay\IyzipayResource;
-use Iyzipay\JsonBuilder;
 use Iyzipay\Model\Mapper\CardListMapper;
 use Iyzipay\Options;
 use Iyzipay\Request\RetrieveCardListRequest;
@@ -16,8 +14,8 @@ class CardList extends IyzipayResource
 
     public static function retrieve(RetrieveCardListRequest $request, Options $options)
     {
-        $rawResult = HttpClient::create()->post($options->getBaseUrl() . "/cardstorage/cards", parent::getHttpHeaders($request, $options), $request->toJsonString());
-        return CardListMapper::create()->mapCardList(new CardList(), JsonBuilder::jsonDecode($rawResult));
+        $rawResult = parent::httpClient()->post($options->getBaseUrl() . "/cardstorage/cards", parent::getHttpHeaders($request, $options), $request->toJsonString());
+        return CardListMapper::create($rawResult)->jsonDecode()->mapCardList(new CardList());
     }
 
     public function getCardUserKey()
